@@ -41,23 +41,23 @@ class Scene2 extends Phaser.Scene {
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.player.setCollideWorldBounds(true);
 
-    this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, null, this);
+    this.physics.add.overlap(this.player, this.enemies, this.getBubble, null, this);
 
     this.oxygen = 100;
     this.oxygenLabel = this.add.text(775, 10, "OXYGEN LEVEL: " + Math.round(this.oxygen) + "%");   
   }
 
 
-  hurtPlayer(player, enemy) {
+  getBubble(player, bubble) {
 
-    this.resetShipPos(enemy);
+    this.resetDiverPos(bubble);
 
     if(this.player.alpha < 1){
         return;
     }
 
     
-    this.resetShipPos(enemy);
+    this.resetDiverPos(bubble);
     this.oxygen += 5;
     if (this.oxygen > 100)
     {
@@ -93,11 +93,11 @@ class Scene2 extends Phaser.Scene {
 
   update() {
 
-    this.moveShip(this.bubble1, -7);
-    this.moveShip(this.bubble2, -7);
-    this.moveShip(this.bubble3, -7);
-    this.moveShip(this.bubble4, -7);
-    this.moveShip(this.bubble5, -7);
+    this.moveDiver(this.bubble1, -7);
+    this.moveDiver(this.bubble2, -7);
+    this.moveDiver(this.bubble3, -7);
+    this.moveDiver(this.bubble4, -7);
+    this.moveDiver(this.bubble5, -7);
     this.oxygen -= .15;
     if (this.oxygen <= 0)
     {
@@ -109,12 +109,21 @@ class Scene2 extends Phaser.Scene {
 
      this.movePlayerManager();
 
-
   } 
 
 
+  moveDiver(diver, speed) {
+    diver.y += speed;
+    if (diver.y < 0) {
+      this.resetDiverPos(diver);
+    }
+  }
 
-
+  resetDiverPos(diver) {
+    diver.y = 518;
+    var randomX = Phaser.Math.Between(0, config.width);
+    diver.x = randomX;
+  }
 
   movePlayerManager() {
 
@@ -132,19 +141,5 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocityY(gameSettings.playerSpeed);
     }
   }
-
-  moveShip(ship, speed) {
-    ship.y += speed;
-    if (ship.y < 0) {
-      this.resetShipPos(ship);
-    }
-  }
-
-  resetShipPos(ship) {
-    ship.y = 518;
-    var randomX = Phaser.Math.Between(0, config.width);
-    ship.x = randomX;
-  }
-
 
 }
